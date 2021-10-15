@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
+import org.json.JSONObject
 import java.lang.Exception
 import java.net.URI
 
 class MainActivity : AppCompatActivity() {
     lateinit var client: WebSocketClient
     val wsUrl: String = BuildConfig.wsUrl
+    val authToken: String = BuildConfig.authToken
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +25,20 @@ class MainActivity : AppCompatActivity() {
         client = object : WebSocketClient(URI(wsUrl)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d("socket", "onOpen")
+
+                val msg = JSONObject().apply {
+                    put("auth", authToken)
+                }
+                this.send(msg.toString())
             }
 
             override fun onMessage(message: String?) {
                 Log.d("socket", "onMessage: $message")
+
+                val json = JSONObject(message)
+                if (json.has("error")) {
+                    Log.d("socket", "Authentication failed")
+                }
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
