@@ -11,8 +11,6 @@ import java.net.URI
 
 class MainActivity : AppCompatActivity() {
     lateinit var client: WebSocketClient
-    val wsUrl: String = BuildConfig.wsUrl
-    val authToken: String = BuildConfig.authToken
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,13 +19,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        client = makeClient()
+        client.connect()
+    }
 
-        client = object : WebSocketClient(URI(wsUrl)) {
+    override fun onPause() {
+        super.onPause()
+        client.close()
+    }
+
+    private fun makeClient(): WebSocketClient {
+        return object : WebSocketClient(URI(BuildConfig.wsUrl)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d("socket", "onOpen")
 
                 val msg = JSONObject().apply {
-                    put("auth", authToken)
+                    put("auth", BuildConfig.authToken)
                 }
                 this.send(msg.toString())
             }
@@ -35,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             override fun onMessage(message: String?) {
                 Log.d("socket", "onMessage: $message")
 
-                val json = JSONObject(message)
+                val json = JSONObject(message ?: "{}")
                 if (json.has("error")) {
                     Log.d("socket", "Authentication failed")
                 }
@@ -48,14 +55,6 @@ class MainActivity : AppCompatActivity() {
             override fun onError(ex: Exception?) {
                 Log.d("socket", "onError: ${ex?.message}")
             }
-
         }
-
-        client.connect()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        client.close()
     }
 }
