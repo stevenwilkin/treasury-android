@@ -9,6 +9,8 @@ import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.URI
+import java.text.NumberFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var client: WebSocketClient
@@ -77,14 +79,16 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val usd = NumberFormat.getCurrencyInstance(Locale.US)
+
         runOnUiThread {
-            textExposure.text = json.optDouble("exposure").toString()
-            textLeverageDeribit.text = json.optDouble("leverage_deribit").toString()
-            textLeverageBybit.text = json.optDouble("leverage_bybit").toString()
-            textCost.text = json.optDouble("cost").toString()
-            textValue.text = json.optDouble("value").toString()
-            textPnl.text = json.optDouble("pnl").toString()
-            textPnlPercentage.text = json.optDouble("pnl_percentage").toString()
+            textExposure.text = "%.8f".format(json.optDouble("exposure"))
+            textLeverageDeribit.text = "%.2f".format(json.optDouble("leverage_deribit"))
+            textLeverageBybit.text = "%.2f".format(json.optDouble("leverage_bybit"))
+            textCost.text = usd.format(json.optDouble("cost"))
+            textValue.text = usd.format(json.optDouble("value"))
+            textPnl.text = usd.format(json.optDouble("pnl"))
+            textPnlPercentage.text = "%.2f%%".format(json.optDouble("pnl_percentage"))
         }
     }
 }
