@@ -72,6 +72,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleStats(json: JSONObject) {
+        val usd = NumberFormat.getCurrencyInstance(Locale.US)
+        textExposure.text = "%.8f".format(json.optDouble("exposure"))
+        textLeverageDeribit.text = "%.2f".format(json.optDouble("leverage_deribit"))
+        textLeverageBybit.text = "%.2f".format(json.optDouble("leverage_bybit"))
+        textCost.text = usd.format(json.optDouble("cost"))
+        textValue.text = usd.format(json.optDouble("value"))
+        textPnl.text = usd.format(json.optDouble("pnl"))
+        textPnlPercentage.text = "%.2f%%".format(json.optDouble("pnl_percentage"))
+    }
+
     private fun handlePayload(state: String) {
         val json = JSONObject(state)
         if (json.has("error")) {
@@ -79,16 +90,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val usd = NumberFormat.getCurrencyInstance(Locale.US)
-
         runOnUiThread {
-            textExposure.text = "%.8f".format(json.optDouble("exposure"))
-            textLeverageDeribit.text = "%.2f".format(json.optDouble("leverage_deribit"))
-            textLeverageBybit.text = "%.2f".format(json.optDouble("leverage_bybit"))
-            textCost.text = usd.format(json.optDouble("cost"))
-            textValue.text = usd.format(json.optDouble("value"))
-            textPnl.text = usd.format(json.optDouble("pnl"))
-            textPnlPercentage.text = "%.2f%%".format(json.optDouble("pnl_percentage"))
+            handleStats(json)
         }
     }
 }
