@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var textPnl: TextView
     lateinit var textPnlPercentage: TextView
     lateinit var layout: ConstraintLayout
-    lateinit var verticalBarrier: Barrier
     lateinit var assetsBarrier: Barrier
     lateinit var assets: MutableMap<String, MutableMap<String, TextView>>
     lateinit var prices: MutableMap<String, TextView>
@@ -51,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         textPnlPercentage = findViewById(R.id.textPnlPercentage)
         assets = mutableMapOf<String, MutableMap<String, TextView>>()
         layout = findViewById(R.id.layout_main_activity)
-        verticalBarrier = findViewById<Barrier>(R.id.barrierVertical)
         prices = mutableMapOf<String, TextView>()
     }
 
@@ -135,7 +133,6 @@ class MainActivity : AppCompatActivity() {
             venueLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topToBottom = previousView.id
                 topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
-                startToStart = R.id.textLabelPnl
             }
 
             assetBarrier.referencedIds += venueLabel.id
@@ -153,8 +150,6 @@ class MainActivity : AppCompatActivity() {
                 assetLabel.id = View.generateViewId()
                 layout.addView(assetLabel)
 
-                verticalBarrier.referencedIds += assetLabel.id
-
                 assetLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     topToTop = previousView.id
                     startToEnd = assetBarrier.id
@@ -169,8 +164,7 @@ class MainActivity : AppCompatActivity() {
 
                 assetQuantity.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     topToTop = assetLabel.id
-                    startToEnd = verticalBarrier.id
-                    marginStart = (24 * Resources.getSystem().displayMetrics.density).toInt()
+                    endToEnd = layout.id
                 }
 
                 assets[venue]!![asset] = assetQuantity
@@ -217,7 +211,6 @@ class MainActivity : AppCompatActivity() {
             priceLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topToBottom = previousView.id
                 topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
-                startToStart = R.id.textLabelPnl
             }
 
             val price = TextView(this)
@@ -228,8 +221,7 @@ class MainActivity : AppCompatActivity() {
 
             price.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 topToTop = priceLabel.id
-                startToEnd = verticalBarrier.id
-                marginStart = (24 * Resources.getSystem().displayMetrics.density).toInt()
+                endToEnd = layout.id
             }
 
             prices[symbol] = price

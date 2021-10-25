@@ -5,14 +5,16 @@
     android:id="@+id/layout_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="32dp"
+    android:paddingRight="16dp"
+    app:barrierMargin="16dp"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textLabelExposure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:text="Exposure"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +24,6 @@
         android:id="@+id/textLabelLeverage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Leverage"
         android:textSize="20sp"
@@ -33,7 +34,6 @@
         android:id="@+id/textLabelCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="Cost"
         android:textSize="20sp"
@@ -44,7 +44,6 @@
         android:id="@+id/textLabelValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Value"
         android:textSize="20sp"
@@ -55,90 +54,73 @@
         android:id="@+id/textLabelPnl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="PNL"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textLabelValue" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrierVertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="textLabelExposure,textLabelLeverage"
-        tools:layout_editor_absoluteX="54dp"
-        tools:layout_editor_absoluteY="41dp" />
-
     <TextView
         android:id="@+id/textExposure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="@id/barrierVertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textLeverageDeribit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="@id/barrierVertical"
+        app:layout_constraintEnd_toStartOf="@id/textLeverageBybit"
         app:layout_constraintTop_toBottomOf="@+id/textExposure" />
 
     <TextView
         android:id="@+id/textLeverageBybit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/textLeverageDeribit"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textExposure" />
 
     <TextView
         android:id="@+id/textCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/barrierVertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textLeverageDeribit" />
 
     <TextView
         android:id="@+id/textValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/barrierVertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textCost" />
 
     <TextView
         android:id="@+id/textPnl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/barrierVertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textValue" />
 
     <TextView
         android:id="@+id/textPnlPercentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/barrierVertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textPnl" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -147,6 +129,8 @@
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
         app:barrierMargin="16dp"
-        app:constraint_referenced_ids="textPnlPercentage" />
+        app:constraint_referenced_ids="textPnlPercentage"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="266dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
