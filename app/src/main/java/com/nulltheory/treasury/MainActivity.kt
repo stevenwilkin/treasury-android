@@ -3,6 +3,7 @@ package com.nulltheory.treasury
 import android.app.ActionBar
 import android.app.Activity
 import android.content.res.Resources
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -91,15 +92,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateText(view: TextView, text: String) {
+        val color = if (view.text.isNotEmpty() && view.text != text) {
+            Color.WHITE
+        } else {
+            Color.parseColor("#919191")
+        }
+
+        view.text = text
+        view.setTextColor(color)
+    }
+
     private fun handleStats(json: JSONObject) {
         val usd = NumberFormat.getCurrencyInstance(Locale.US)
-        textExposure.text = "%.8f".format(json.optDouble("exposure"))
-        textLeverageDeribit.text = "%.2f".format(json.optDouble("leverage_deribit"))
-        textLeverageBybit.text = "%.2f".format(json.optDouble("leverage_bybit"))
-        textCost.text = usd.format(json.optDouble("cost"))
-        textValue.text = usd.format(json.optDouble("value"))
-        textPnl.text = usd.format(json.optDouble("pnl"))
-        textPnlPercentage.text = "%.2f%%".format(json.optDouble("pnl_percentage"))
+        updateText(textExposure, "%.8f".format(json.optDouble("exposure")))
+        updateText(textLeverageDeribit, "%.2f".format(json.optDouble("leverage_deribit")))
+        updateText(textLeverageBybit, "%.2f".format(json.optDouble("leverage_bybit")))
+        updateText(textCost, usd.format(json.optDouble("cost")))
+        updateText(textValue, usd.format(json.optDouble("value")))
+        updateText(textPnl, usd.format(json.optDouble("pnl")))
+        updateText(textPnlPercentage, "%.2f%%".format(json.optDouble("pnl_percentage")))
     }
 
     private fun createAssets(json: JSONObject) {
@@ -186,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 val quantity = venueAssets.getDouble(asset)
 
                 if (assets.containsKey(venue) && assets[venue]!!.containsKey(asset)) {
-                    assets[venue]!![asset]?.text = "%.8f".format(quantity)
+                    updateText(assets[venue]!![asset]!!, "%.8f".format(quantity))
                 }
             }
         }
@@ -233,7 +245,7 @@ class MainActivity : AppCompatActivity() {
 
         for (symbol in json.keys()) {
             if (prices.containsKey(symbol)) {
-                prices[symbol]?.text = "%.2f".format(json.getDouble(symbol))
+                updateText(prices[symbol]!!, "%.2f".format(json.getDouble(symbol)))
             }
         }
     }
