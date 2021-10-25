@@ -34,7 +34,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var textPnlPercentage: TextView
     lateinit var layout: ConstraintLayout
     lateinit var verticalBarrier: Barrier
+    lateinit var assetsBarrier: Barrier
     lateinit var assets: MutableMap<String, MutableMap<String, TextView>>
+    lateinit var prices: MutableMap<String, TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         assets = mutableMapOf<String, MutableMap<String, TextView>>()
         layout = findViewById(R.id.layout_main_activity)
         verticalBarrier = findViewById<Barrier>(R.id.barrierVertical)
+        prices = mutableMapOf<String, TextView>()
     }
 
     override fun onResume() {
@@ -161,6 +164,13 @@ class MainActivity : AppCompatActivity() {
                 assets[venue]!![asset] = assetQuantity
             }
         }
+
+        assetsBarrier = Barrier(this)
+        assetsBarrier.id = View.generateViewId()
+        assetsBarrier.referencedIds += previousView.id
+        assetsBarrier.type = Barrier.BOTTOM
+        assetsBarrier.margin = (16 * Resources.getSystem().displayMetrics.density).toInt()
+        layout.addView(assetsBarrier)
     }
 
     private fun handleAssets(json: JSONObject) {
@@ -182,6 +192,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun createPrices(json: JSONObject) {
+        var previousView: View = assetsBarrier
+
+        for (symbol in json.keys()) {
+            val priceLabel = TextView(this)
+            priceLabel.text = symbol
+            priceLabel.textSize = 20f
+            priceLabel.id = View.generateViewId()
+            layout.addView(priceLabel)
+
+            priceLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topToBottom = previousView.id
+                topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
+                startToStart = R.id.textLabelPnl
+            }
+
+            val price = TextView(this)
+            price.text = "%.2f".format(json.getDouble(symbol))
+            price.textSize = 20f
+            price.id = View.generateViewId()
+            layout.addView(price)
+
+            price.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topToTop = priceLabel.id
+                startToEnd = verticalBarrier.id
+                marginStart = (24 * Resources.getSystem().displayMetrics.density).toInt()
+            }
+
+            prices[symbol] = price
+            previousView = priceLabel
+        }
+    }
+
+    private fun handlePrices(json: JSONObject) {
+        if (prices.isEmpty()) {
+            createPrices(json)
+            return
+        }
+
+        for (symbol in json.keys()) {
+            if (prices.containsKey(symbol)) {
+                prices[symbol]?.text = "%.2f".format(json.getDouble(symbol))
+            }
+        }
+    }
+
     private fun handlePayload(state: String) {
         val json = JSONObject(state)
         if (json.has("error")) {
@@ -193,6 +249,9 @@ class MainActivity : AppCompatActivity() {
             handleStats(json)
             if (json.has("assets")) {
                 handleAssets(json.getJSONObject("assets"))
+            }
+            if (json.has("prices")) {
+                handlePrices(json.getJSONObject("prices"))
             }
         }
     }
