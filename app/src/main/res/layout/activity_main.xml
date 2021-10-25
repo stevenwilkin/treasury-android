@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -139,5 +140,13 @@
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@id/barrierVertical"
         app:layout_constraintTop_toBottomOf="@+id/textPnl" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="16dp"
+        app:constraint_referenced_ids="textPnlPercentage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
