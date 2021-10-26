@@ -163,7 +163,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             assetBarrier.referencedIds += venueLabel.id
-            previousView = venueLabel
 
             val venueAssets = json.getJSONObject(venue)
 
@@ -178,7 +177,8 @@ class MainActivity : AppCompatActivity() {
                 layout.addView(assetLabel)
 
                 assetLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = previousView.id
+                    topToBottom = previousView.id
+                    topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
                     startToEnd = assetBarrier.id
                     marginStart = (24 * Resources.getSystem().displayMetrics.density).toInt()
                 }
@@ -195,6 +195,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 assets[venue]!![asset] = assetQuantity
+                previousView = assetLabel
             }
         }
 
