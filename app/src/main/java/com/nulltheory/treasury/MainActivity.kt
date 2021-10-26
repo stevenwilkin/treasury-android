@@ -184,7 +184,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val assetQuantity = TextView(this)
-                assetQuantity.text = "%.8f".format(quantity)
+                assetQuantity.text = if (asset.contains("USD")) {
+                    "%,.2f".format(quantity)
+                } else {
+                    "%.8f".format(quantity)
+                }
                 assetQuantity.textSize = 20f
                 assetQuantity.id = View.generateViewId()
                 layout.addView(assetQuantity)
@@ -221,7 +225,12 @@ class MainActivity : AppCompatActivity() {
                 val quantity = venueAssets.getDouble(asset)
 
                 if (assets.containsKey(venue) && assets[venue]!!.containsKey(asset)) {
-                    updateText(assets[venue]!![asset]!!, "%.8f".format(quantity))
+                    val quantityStr = if (asset.contains("USD")) {
+                        "%,.2f".format(quantity)
+                    } else {
+                        "%.8f".format(quantity)
+                    }
+                    updateText(assets[venue]!![asset]!!, quantityStr)
                 }
             }
         }
