@@ -8,7 +8,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/textTreasury"
@@ -23,14 +25,15 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_content"
+        android:id="@+id/layout_content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="16dp"
         android:paddingTop="32dp"
         android:paddingRight="16dp"
         android:visibility="gone"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/textLabelExposure"
@@ -144,15 +147,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textPnl" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrierStats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:barrierMargin="16dp"
-            app:constraint_referenced_ids="textPnlPercentage"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="266dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingTop="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textPnlPercentage"></androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

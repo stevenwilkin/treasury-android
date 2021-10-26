@@ -35,11 +35,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var textValue: TextView
     lateinit var textPnl: TextView
     lateinit var textPnlPercentage: TextView
+    lateinit var layoutContainer: ConstraintLayout
     lateinit var layout: ConstraintLayout
     lateinit var loading: ConstraintLayout
     lateinit var assetsBarrier: Barrier
     lateinit var assets: MutableMap<String, MutableMap<String, TextView>>
     lateinit var prices: MutableMap<String, TextView>
+    var recreateContent = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         textPnl = findViewById(R.id.textPnl)
         textPnlPercentage = findViewById(R.id.textPnlPercentage)
         assets = mutableMapOf<String, MutableMap<String, TextView>>()
+        layoutContainer = findViewById(R.id.layout_content_container)
         layout = findViewById(R.id.layout_content)
         loading = findViewById(R.id.layout_loading)
         prices = mutableMapOf<String, TextView>()
@@ -95,9 +98,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fadeInContent() {
-        var duration = resources.getInteger(android.R.integer.config_shortAnimTime)
+        val duration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-        layout.apply {
+        layoutContainer.apply {
             alpha = 0f
             visibility = View.VISIBLE
 
@@ -115,6 +118,16 @@ class MainActivity : AppCompatActivity() {
                     loading.visibility = View.GONE
                 }
             })
+    }
+
+    private fun clearContent() {
+        layoutContainer.visibility = View.GONE
+        loading.visibility = View.VISIBLE
+        loading.alpha = 1f
+        layout.removeAllViewsInLayout()
+        assets = mutableMapOf<String, MutableMap<String, TextView>>()
+        prices = mutableMapOf<String, TextView>()
+        recreateContent = false
     }
 
     private fun updateText(view: TextView, text: String) {
@@ -140,7 +153,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createAssets(json: JSONObject) {
-        var previousView: View = findViewById(R.id.barrierStats)
+        var previousView: View? = null
 
         val assetBarrier = Barrier(this)
         assetBarrier.id = View.generateViewId()
@@ -158,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             layout.addView(venueLabel)
 
             venueLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                topToBottom = previousView.id
+                previousView?.let { topToBottom = it.id }
                 topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
             }
 
@@ -177,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                 layout.addView(assetLabel)
 
                 assetLabel.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToBottom = previousView.id
+                    previousView?.let { topToBottom = it.id }
                     topMargin = (8 * Resources.getSystem().displayMetrics.density).toInt()
                     startToEnd = assetBarrier.id
                     marginStart = (24 * Resources.getSystem().displayMetrics.density).toInt()
@@ -205,7 +218,7 @@ class MainActivity : AppCompatActivity() {
 
         assetsBarrier = Barrier(this)
         assetsBarrier.id = View.generateViewId()
-        assetsBarrier.referencedIds += previousView.id
+        previousView?.let { assetsBarrier.referencedIds += it.id }
         assetsBarrier.type = Barrier.BOTTOM
         assetsBarrier.margin = (16 * Resources.getSystem().displayMetrics.density).toInt()
         layout.addView(assetsBarrier)
@@ -218,10 +231,15 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        var numberAssets = 0
+        var existingAssets = 0
+        assets.forEach { existingAssets += it.value.keys.size }
+
         for (venue in json.keys()) {
             val venueAssets = json.getJSONObject(venue)
 
             for (asset in venueAssets.keys()) {
+                numberAssets++
                 val quantity = venueAssets.getDouble(asset)
 
                 if (assets.containsKey(venue) && assets[venue]!!.containsKey(asset)) {
@@ -231,8 +249,14 @@ class MainActivity : AppCompatActivity() {
                         "%.8f".format(quantity)
                     }
                     updateText(assets[venue]!![asset]!!, quantityStr)
+                } else {
+                    recreateContent = true
                 }
             }
+        }
+
+        if (numberAssets != existingAssets) {
+            recreateContent = true
         }
     }
 
@@ -288,6 +312,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         runOnUiThread {
+            if (recreateContent) {
+                clearContent()
+            }
             handleStats(json)
             if (json.has("assets")) {
                 handleAssets(json.getJSONObject("assets"))
