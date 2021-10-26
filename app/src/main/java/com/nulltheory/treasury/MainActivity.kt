@@ -1,5 +1,7 @@
 package com.nulltheory.treasury
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.ActionBar
 import android.app.Activity
 import android.content.res.Resources
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var textPnl: TextView
     lateinit var textPnlPercentage: TextView
     lateinit var layout: ConstraintLayout
+    lateinit var loading: ConstraintLayout
     lateinit var assetsBarrier: Barrier
     lateinit var assets: MutableMap<String, MutableMap<String, TextView>>
     lateinit var prices: MutableMap<String, TextView>
@@ -49,7 +52,8 @@ class MainActivity : AppCompatActivity() {
         textPnl = findViewById(R.id.textPnl)
         textPnlPercentage = findViewById(R.id.textPnlPercentage)
         assets = mutableMapOf<String, MutableMap<String, TextView>>()
-        layout = findViewById(R.id.layout_main_activity)
+        layout = findViewById(R.id.layout_content)
+        loading = findViewById(R.id.layout_loading)
         prices = mutableMapOf<String, TextView>()
     }
 
@@ -88,6 +92,29 @@ class MainActivity : AppCompatActivity() {
                 Log.d("socket", "onError: ${ex?.message}")
             }
         }
+    }
+
+    private fun fadeInContent() {
+        var duration = resources.getInteger(android.R.integer.config_shortAnimTime)
+
+        layout.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            animate()
+                .alpha(1f)
+                .setDuration(duration.toLong())
+                .setListener(null)
+        }
+
+        loading.animate()
+            .alpha(0f)
+            .setDuration(duration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    loading.visibility = View.GONE
+                }
+            })
     }
 
     private fun updateText(view: TextView, text: String) {
@@ -182,6 +209,7 @@ class MainActivity : AppCompatActivity() {
     private fun handleAssets(json: JSONObject) {
         if (assets.isEmpty()) {
             createAssets(json)
+            fadeInContent()
             return
         }
 
