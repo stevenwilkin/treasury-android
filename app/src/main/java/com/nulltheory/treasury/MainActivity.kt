@@ -242,7 +242,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val price = TextView(this)
-            price.text = "%.2f".format(json.getDouble(symbol))
+            price.text = "%,.2f".format(json.getDouble(symbol))
             price.textSize = 20f
             price.id = View.generateViewId()
             layout.addView(price)
@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity() {
 
         for (symbol in json.keys()) {
             if (prices.containsKey(symbol)) {
-                updateText(prices[symbol]!!, "%.2f".format(json.getDouble(symbol)))
+                updateText(prices[symbol]!!, "%,.2f".format(json.getDouble(symbol)))
             }
         }
     }
